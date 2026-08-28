@@ -1,0 +1,8 @@
+{
+  "deny_private_message": {
+    "description": "非白名单用户私聊时的拒绝提示",
+    "type": "string",
+    "default": "您不在受信任名单中，无法通过私聊使用AI。请联系管理员添加信任。",
+    "hint": "非白名单用户尝试私聊AI时显示的提示信息"
+  }
+}
