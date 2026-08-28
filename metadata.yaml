@@ -3,3 +3,5 @@ desc: 限制用户与AI聊天的白名单插件。白名单用户可在群聊和
 author: HamLJYH
 version: 1.0.0
 repo: https://github.com/HamLJYH/astrbot_plugin_chat_limiter
+support_platforms:
+  - aiocqhttp
