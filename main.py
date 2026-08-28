@@ -1,5 +1,5 @@
 """
-AstrBot 聊天限制器插件 v1.0
+AstrBot 聊天限制器插件
 
 功能描述：
 - 管理员可将用户添加至受信任名单
@@ -8,7 +8,7 @@ AstrBot 聊天限制器插件 v1.0
 - 只在不信任用户发送消息并触发AI回复时拦截，只回复一次警告
 
 作者: HamLJYH
-版本: 1.0.0
+版本: 1.0.1
 日期: 2026-08-28
 """
 
@@ -80,10 +80,6 @@ class ChatLimiterPlugin(Star):
         sender_id = str(event.get_sender_id())
         return sender_id in self.trust_list
 
-    def _is_limiter_enabled(self) -> bool:
-        """检查限制器是否启用（优先读取配置，否则使用默认值）"""
-        return self.config.get("enable_limiter", self.DEFAULT_ENABLE_LIMITER)
-
     def _get_deny_message(self) -> str:
         """获取拒绝提示消息（优先读取配置，否则使用默认值）"""
         return self.config.get("deny_private_message", self.DEFAULT_DENY_MESSAGE)
@@ -96,7 +92,7 @@ class ChatLimiterPlugin(Star):
         这里不能使用 yield 发送消息，必须使用 event.send()。
         """
         # 如果插件未启用，直接放行
-        if not self._is_limiter_enabled():
+        if not self.DEFAULT_ENABLE_LIMITER:
             return
 
         # 只处理私聊消息（群聊直接放行）
@@ -178,10 +174,7 @@ class ChatLimiterPlugin(Star):
 
     @filter.command("trustlist")
     async def cmd_trustlist(self, event: AstrMessageEvent):
-        """查看受信任用户名单
-
-        用法: /trustlist
-        """
+        """查看受信任用户名单"""
         if not self.trust_list:
             yield event.plain_result("受信任名单为空\n使用 /trust <QQ号> 添加用户")
             return
@@ -198,59 +191,20 @@ class ChatLimiterPlugin(Star):
     async def cmd_checktrust(self, event: AstrMessageEvent, user_id: str = None):
         """检查指定用户是否在受信任名单中
 
-        用法: /checktrust <QQ号> 或 /checktrust（检查自己）
+        用法: /checktrust <QQ号>
         """
-        if user_id:
-            target_id = str(user_id).strip()
-        else:
-            target_id = str(event.get_sender_id())
-
-        is_trusted = target_id in self.trust_list
-        is_admin = target_id == str(event.get_sender_id()) and event.role == "admin"
-        # 对于查询其他用户，无法直接知道其role，只能检查是否在trust_list
-        if user_id and target_id != str(event.get_sender_id()):
-            is_admin = False
-
-        status = []
-        if is_admin:
-            status.append("AstrBot 管理员")
-        if is_trusted:
-            status.append("受信任用户")
-
-        if status:
-            yield event.plain_result(f"用户 {target_id}\n" + "\n".join(status))
-        else:
-            yield event.plain_result(f"用户 {target_id}\n不在受信任名单中\n私聊功能已被限制")
-
-    @filter.command("limiter")
-    @filter.permission_type(filter.PermissionType.ADMIN)
-    async def cmd_limiter(self, event: AstrMessageEvent, action: str = None):
-        """管理限制器开关
-
-        用法: 
-        /limiter on  - 开启限制
-        /limiter off - 关闭限制
-        /limiter status - 查看状态
-        """
-        if not action:
-            yield event.plain_result("请提供操作参数\n用法: /limiter <on|off|status>")
+        if not user_id:
+            yield event.plain_result("请提供用户QQ号\n用法: /checktrust <QQ号>")
             return
 
-        action = action.lower().strip()
+        target_id = str(user_id).strip()
 
-        if action == "on":
-            self.config["enable_limiter"] = True
-            self.config.save_config()
-            yield event.plain_result("聊天限制器已开启\n非受信任用户将无法在私聊中使用AI")
-        elif action == "off":
-            self.config["enable_limiter"] = False
-            self.config.save_config()
-            yield event.plain_result("聊天限制器已关闭\n所有用户都可以在任何场景使用AI")
-        elif action in ("status", "st"):
-            status = "已开启" if self._is_limiter_enabled() else "已关闭"
-            yield event.plain_result(f"限制器状态: {status}\n受信任用户: {len(self.trust_list)} 人")
+        is_trusted = target_id in self.trust_list
+
+        if is_trusted:
+            yield event.plain_result(f"用户 {target_id}\n受信任用户")
         else:
-            yield event.plain_result("未知操作，可用: on / off / status")
+            yield event.plain_result(f"用户 {target_id}\n不在受信任名单中\n私聊功能已被限制")
 
     async def terminate(self):
         """插件卸载时保存数据"""
