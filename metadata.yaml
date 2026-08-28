@@ -1,0 +1,5 @@
+name: astrbot_plugin_chat_limiter
+desc: 限制用户与AI聊天的白名单插件。白名单用户可在群聊和私聊中使用，非白名单用户仅限群聊使用。
+author: HamLJYH
+version: 1.0.0
+repo: https://github.com/example/astrbot_plugin_chat_limiter
