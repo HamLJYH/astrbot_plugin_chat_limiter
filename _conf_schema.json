@@ -4,5 +4,29 @@
     "type": "string",
     "default": "您不在受信任名单中，无法通过私聊使用AI。请联系管理员添加信任。",
     "hint": "非白名单用户尝试私聊AI时显示的提示信息"
+  },
+  "enabled_platforms": {
+    "description": "启用聊天限制的平台列表",
+    "type": "list",
+    "hint": "填写平台名称，如 aiocqhttp、wecom、telegram、discord 等。留空表示所有平台都启用限制。只有列表中的平台才会进行信任判断，其他平台直接放行。",
+    "default": [],
+    "options": [
+      "aiocqhttp",
+      "wecom",
+      "wecom_ai_bot",
+      "telegram",
+      "discord",
+      "lark",
+      "dingtalk",
+      "weixin_official_account",
+      "weixin_oc",
+      "slack",
+      "kook",
+      "line",
+      "matrix",
+      "misskey",
+      "satori",
+      "webchat"
+    ]
   }
 }
