@@ -8,7 +8,7 @@
   "enabled_platforms": {
     "description": "启用聊天限制的平台列表",
     "type": "list",
-    "hint": "填写平台名称，如 aiocqhttp、wecom、telegram、discord 等。留空表示所有平台都启用限制。只有列表中的平台才会进行信任判断，其他平台直接放行。",
+    "hint": "本插件仅在 aiocqhttp 平台完成测试，列表中其他平台均未验证，启用前请自行确认拦截行为是否符合预期。只有列表中的平台才会进行信任判断，其他平台直接放行。",
     "default": [],
     "options": [
       "aiocqhttp",
